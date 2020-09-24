@@ -1,11 +1,12 @@
+import model_utils
 from django.db import models
 from model_utils.models import TimeStampedModel
 
-FOOD_TYPE_CHOICES = ((10, "meat"), (11, "vegetarian"), (12, "vegan"))
+FOOD_TYPE_CHOICES = model_utils.Choices((10, 'meat', 'Meat'), (11, 'vegetarian', 'Vegetarian'), (12, 'vegan', 'Vegan'), (100, 'unknown', 'Unknown'),)
 
 
 class Dish(TimeStampedModel):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     description = models.CharField(default="", max_length=250)
     price = models.DecimalField(max_digits=5, decimal_places=2)
     prep_time = models.DurationField()
@@ -21,3 +22,8 @@ class MenuCard(TimeStampedModel):
     name = models.CharField(max_length=100, unique=True)
     description = models.CharField(default="", max_length=250)
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['dish', 'name'], name='unique_dish_name')
+        ]
