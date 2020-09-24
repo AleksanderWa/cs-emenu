@@ -1,7 +1,7 @@
 from django.db import models
 from model_utils.models import TimeStampedModel
 
-FOOD_TYPE_CHOICES = ((10, "Meat"), (11, "Vegetarian"), (12, "Vegan"))
+FOOD_TYPE_CHOICES = ((10, "meat"), (11, "vegetarian"), (12, "vegan"))
 
 
 class Dish(TimeStampedModel):
