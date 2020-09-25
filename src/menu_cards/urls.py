@@ -1,7 +1,11 @@
+from django.conf.urls import url
+from django.urls import include
 from rest_framework import routers
+from menu_cards.views import DishViewSet
 
 router = routers.DefaultRouter()
-# router.register('stats', ArticleViewSet, 'statistics')
-# router.register('authors', AuthorViewSet, 'authors')
+router.register('dishes', DishViewSet, basename='dishes')
 
-urlpatterns = router.urls
+urlpatterns = [
+    url(r'^v1/', include(router.urls, namespace='v1'))
+]
