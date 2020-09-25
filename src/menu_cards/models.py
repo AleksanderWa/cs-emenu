@@ -19,7 +19,9 @@ class Dish(TimeStampedModel):
     name = models.CharField(max_length=100)
     description = models.CharField(default="", max_length=250)
     price = models.DecimalField(max_digits=5, decimal_places=2)
-    menu_card = models.ForeignKey(MenuCard, on_delete=models.SET_NULL, null=True, related_name='dishes')
+    menu_card = models.ForeignKey(
+        MenuCard, on_delete=models.SET_NULL, null=True, related_name='dishes'
+    )
     prep_time = models.DurationField()
     food_type = models.SmallIntegerField(
         choices=FOOD_TYPE_CHOICES,

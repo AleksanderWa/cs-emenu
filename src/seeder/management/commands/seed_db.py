@@ -66,7 +66,9 @@ def create_menu_cards():
     menu_cards = MenuCardsFactory.create_batch(NUMBER_OF_TEST_MENU_CARDS)
 
     meat_dishes = Dish.objects.filter(food_type=FOOD_TYPE_CHOICES.meat)
-    vegetarian_dishes = Dish.objects.filter(food_type=FOOD_TYPE_CHOICES.vegetarian)
+    vegetarian_dishes = Dish.objects.filter(
+        food_type=FOOD_TYPE_CHOICES.vegetarian
+    )
     vegan_dishes = Dish.objects.filter(food_type=FOOD_TYPE_CHOICES.vegan)
 
     assign_dishes_to_cards(meat_dishes, menu_cards[0])
