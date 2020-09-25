@@ -8,7 +8,7 @@ from seeder.factories.dishes import DishFactory
 from seeder.factories.menus import MenuCardsFactory
 
 logger = logging.getLogger(__name__)
-
+print(f"logger name : {logger}")
 NUMBER_OF_TEST_DISHES = 15
 NUMBER_OF_TEST_MENU_CARDS = 5
 EXAMPLE_MEAT_DISHES = ['Roasted Cactus', 'Spicy Herbed Chicken', 'Sugar Rib Roast',
@@ -16,6 +16,8 @@ EXAMPLE_MEAT_DISHES = ['Roasted Cactus', 'Spicy Herbed Chicken', 'Sugar Rib Roas
 EXAMPLE_VEGETARIAN_DISHES = ['Bowl of Chocolate Tapioca Pudding',
                              'Avocado Smoothie', 'Roasted Cactus', 'Flatbread', 'Scrambled Eggs']
 EXAMPLE_VEGAN_DISHES = ['Chickpea Curry', 'Potato Massaman curry', 'Fries']
+
+EXAMPLE_DISHES = EXAMPLE_VEGETARIAN_DISHES + EXAMPLE_MEAT_DISHES + EXAMPLE_VEGAN_DISHES
 
 
 class Command(
@@ -26,6 +28,7 @@ class Command(
     def handle(self, *args, **options):
         create_dishes()
         create_menu_cards()
+        logger.info('Database successfully filled with mocks')
 
 
 def create_dishes():
