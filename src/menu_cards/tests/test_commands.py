@@ -13,10 +13,14 @@ class SeedDBCommandTest(TestCase):
             out = StringIO()
             call_command('seed_db', stdout=out)
             self.assertIn('Created dishes:', caplog.output[0])
-            self.assertIn('Database successfully filled with mocks', caplog.output[-1])
+            self.assertIn(
+                'Database successfully filled with mocks', caplog.output[-1]
+            )
 
     def test_db_has_correct_data(self):
         with self.assertLogs(logger, level='INFO') as caplog:
             call_command('seed_db')
-            dishes_from_db = Dish.objects.only('name').values_list('name', flat=True)
+            dishes_from_db = Dish.objects.only('name').values_list(
+                'name', flat=True
+            )
             self.assertSetEqual(set(dishes_from_db), set(EXAMPLE_DISHES))
