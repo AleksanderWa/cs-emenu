@@ -8,7 +8,6 @@ from seeder.factories.dishes import DishFactory
 from seeder.factories.menus import MenuCardsFactory
 
 logger = logging.getLogger(__name__)
-print(f"logger name : {logger}")
 NUMBER_OF_TEST_DISHES = 15
 NUMBER_OF_TEST_MENU_CARDS = 5
 EXAMPLE_MEAT_DISHES = [
@@ -64,22 +63,24 @@ def create_dishes():
 
 
 def create_menu_cards():
-    meat_dishes = factory.Iterator(
-        Dish.objects.filter(food_type=FOOD_TYPE_CHOICES.meat)
-    )
-    meat_card = MenuCardsFactory(dish=meat_dishes)
+    menu_cards = MenuCardsFactory.create_batch(NUMBER_OF_TEST_MENU_CARDS)
 
-    vegetarian_dishes = factory.Iterator(
-        Dish.objects.filter(food_type=FOOD_TYPE_CHOICES.vegetarian)
-    )
-    vegetarian_card = MenuCardsFactory(dish=vegetarian_dishes)
+    meat_dishes = Dish.objects.filter(food_type=FOOD_TYPE_CHOICES.meat)
+    vegetarian_dishes = Dish.objects.filter(food_type=FOOD_TYPE_CHOICES.vegetarian)
+    vegan_dishes = Dish.objects.filter(food_type=FOOD_TYPE_CHOICES.vegan)
 
-    vegan_dishes = factory.Iterator(
-        Dish.objects.filter(food_type=FOOD_TYPE_CHOICES.vegan)
-    )
-    vegan_card = MenuCardsFactory(dish=vegan_dishes)
+    assign_dishes_to_cards(meat_dishes, menu_cards[0])
+    assign_dishes_to_cards(vegetarian_dishes, menu_cards[1])
+    assign_dishes_to_cards(vegan_dishes, menu_cards[2])
 
-    return meat_card, vegetarian_card, vegan_card
+    return menu_cards
+
+
+@transaction.atomic
+def assign_dishes_to_cards(dishes, card):
+    for dish in dishes:
+        dish.menu_card = card
+        dish.save()
 
 
 @transaction.atomic
