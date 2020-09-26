@@ -42,4 +42,7 @@ class Dish(TimeStampedModel):
 
     @property
     def is_vegetarian(self):
-        return self.food_type == FOOD_TYPE_CHOICES.vegetarian
+        return (
+            self.food_type == FOOD_TYPE_CHOICES.vegetarian
+            or self.food_type == FOOD_TYPE_CHOICES.vegan
+        )

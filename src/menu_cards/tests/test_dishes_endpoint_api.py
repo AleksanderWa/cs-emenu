@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import pytest
 from django.test import TestCase
 from django.urls import reverse
@@ -8,6 +10,7 @@ from menu_cards.tests.conftest import (
     client,
     create_menu_card,
     valid_data_for_dish_creation,
+    invalid_data_for_dish_creation,
 )
 from seeder.management.commands.seed_db import (
     EXAMPLE_MEAT_DISHES,
@@ -34,7 +37,7 @@ class DishesEndpointTest(TestCase):
             EXAMPLE_VEGETARIAN_DISHES,
         )
 
-    def test_dishes__get_list_all_dishes(self):
+    def test_dishes__list_all_dishes(self):
         url = reverse(LIST_URL)
         response = client().get(url)
         for item in response.data:
@@ -69,3 +72,35 @@ class DishesEndpointTest(TestCase):
 
         assert dish_exists
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_dishes__dish_creation_error_on_wrong_data(self):
+        url = reverse(LIST_URL)
+        response = client().post(
+            url, data=invalid_data_for_dish_creation(), format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    'field, values, ordered, reverse_ordered',
+    [
+        (
+            'price',
+            [1.00, 5.00, 2.00],
+            [1.00, 2.00, 5.00],
+            [5.00, 2.00, 1.00],
+        ),
+    ],
+)
+def test_dishes__are_ordered_by_field(
+    client, field, values, ordered, reverse_ordered
+):
+    for value in values:
+        baker.make(Dish, **{field: value})
+
+    url = reverse(LIST_URL)
+    response = client.get(url, {'ordering': field})
+    assert [Decimal(item[field]) for item in response.data] == ordered
+    response = client.get(url, {'ordering': f"-{field}"})
+    assert [Decimal(item[field]) for item in response.data] == reverse_ordered
