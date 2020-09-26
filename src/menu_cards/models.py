@@ -39,3 +39,7 @@ class Dish(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    @property
+    def is_vegetarian(self):
+        return self.food_type == FOOD_TYPE_CHOICES.vegetarian

@@ -19,3 +19,8 @@ RUN pip install -r requirements.txt
 
 # copy project
 COPY . /usr/src/app/
+
+# Copy entrypoint script into the image
+#WORKDIR /usr/src/app
+#COPY ./docker-entrypoint.sh /
+#ENTRYPOINT ["/docker-entrypoint.sh"]

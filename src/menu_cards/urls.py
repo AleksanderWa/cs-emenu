@@ -5,7 +5,7 @@ from menu_cards.views import DishViewSet, MenuCardViewSet
 
 router = routers.DefaultRouter()
 router.register('dishes', DishViewSet, basename='dishes')
-router.register('menu', DishViewSet, basename='menus')
+router.register('menu', MenuCardViewSet, basename='menus')
 
 urlpatterns = [
     url(r'^', include(router.urls)),
