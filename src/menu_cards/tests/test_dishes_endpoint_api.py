@@ -1,10 +1,8 @@
-from decimal import Decimal
-
 import pytest
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
-from menu_cards.models import Dish, MenuCard, FOOD_TYPE_CHOICES
+from menu_cards.models import Dish, FOOD_TYPE_CHOICES
 from model_bakery import baker
 from menu_cards.tests.conftest import (
     client,
@@ -13,7 +11,6 @@ from menu_cards.tests.conftest import (
     invalid_data_for_dish_creation,
 )
 from seeder.management.commands.seed_db import (
-    EXAMPLE_MEAT_DISHES,
     EXAMPLE_VEGAN_DISHES,
     EXAMPLE_VEGETARIAN_DISHES,
 )
@@ -87,9 +84,27 @@ class DishesEndpointTest(TestCase):
     [
         (
             'price',
-            [1.00, 5.00, 2.00],
-            [1.00, 2.00, 5.00],
-            [5.00, 2.00, 1.00],
+            [1.01, 5.01, 2.01],
+            [1.01, 2.01, 5.01],
+            [5.01, 2.01, 1.01],
+        ),
+        (
+            'food_type',
+            [
+                FOOD_TYPE_CHOICES.meat,
+                FOOD_TYPE_CHOICES.vegan,
+                FOOD_TYPE_CHOICES.meat,
+            ],
+            [
+                FOOD_TYPE_CHOICES.meat,
+                FOOD_TYPE_CHOICES.meat,
+                FOOD_TYPE_CHOICES.vegan,
+            ],
+            [
+                FOOD_TYPE_CHOICES.vegan,
+                FOOD_TYPE_CHOICES.meat,
+                FOOD_TYPE_CHOICES.meat,
+            ],
         ),
     ],
 )
@@ -101,6 +116,16 @@ def test_dishes__are_ordered_by_field(
 
     url = reverse(LIST_URL)
     response = client.get(url, {'ordering': field})
-    assert [Decimal(item[field]) for item in response.data] == ordered
+    assert all(
+        [
+            str(item[field]) == str(expected)
+            for item, expected in zip(response.json(), ordered)
+        ]
+    )
     response = client.get(url, {'ordering': f"-{field}"})
-    assert [Decimal(item[field]) for item in response.data] == reverse_ordered
+    assert all(
+        [
+            str(item[field]) == str(expected)
+            for item, expected in zip(response.json(), reverse_ordered)
+        ]
+    )

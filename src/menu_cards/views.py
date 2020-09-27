@@ -27,6 +27,7 @@ class MenuCardViewSet(viewsets.ModelViewSet):
     serializer_class = MenuCardSerializer
     permissions_classes = [permissions.AllowAny]
 
+    filterset_fields = ['id', 'name', 'created', 'modified']
     ordering_fields = ['id', 'name', 'dishes_num']
 
     def get_queryset(self):
