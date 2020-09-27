@@ -1,5 +1,4 @@
 from django.db.models import Count
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions
 
 from menu_cards.models import Dish, MenuCard
@@ -32,10 +31,9 @@ class MenuCardViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         ordering = self.request.query_params.get('ordering')
-        queryset = super().get_queryset()
-        queryset = self._annotate_dishes_num(queryset)
+        queryset = self._annotate_dishes_num(self.queryset)
         if ordering in self.ordering_fields:
-            queryset = self.queryset.order_by(ordering)
+            queryset = queryset.order_by(ordering)
         return queryset
 
     @staticmethod

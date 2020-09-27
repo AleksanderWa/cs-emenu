@@ -1,6 +1,5 @@
 from rest_framework.fields import ReadOnlyField
-from rest_framework.relations import PrimaryKeyRelatedField
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework.serializers import SerializerMethodField
 
 from menu_cards.models import Dish, MenuCard
 from utils import DynamicFieldsModelSerializer
@@ -30,7 +29,7 @@ class MenuCardSerializer(DynamicFieldsModelSerializer):
 
     def create(self, validated_data):
         dishes = validated_data.pop('dishes')
-        menu_card = MenuCard.objects.create(**validated_data)
+        menu_card = super().create(validated_data)
         for dish in dishes:
             Dish.objects.create(menu_card=menu_card, **dish)
         return menu_card
