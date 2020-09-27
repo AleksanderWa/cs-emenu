@@ -25,7 +25,15 @@ class MenuCardSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = MenuCard
-        fields = ['id', 'name', 'description', 'dishes', 'dishes_num']
+        fields = [
+            'id',
+            'name',
+            'description',
+            'dishes',
+            'dishes_num',
+            'created',
+            'modified',
+        ]
 
     def create(self, validated_data):
         dishes = validated_data.pop('dishes')

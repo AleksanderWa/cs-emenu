@@ -20,6 +20,11 @@ def meat_dish():
 
 
 @pytest.fixture
+def vegetarian_dish():
+    return baker.make(Dish, food_type=FOOD_TYPE_CHOICES.vegetarian)
+
+
+@pytest.fixture
 def meat_menu():
     return create_menu_card(
         dict(name='Protein', description='meat and more meat'),

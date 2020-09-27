@@ -137,11 +137,16 @@ def test_dishes__are_ordered_by_field(
 
 
 @freezegun.freeze_time(TIMESTAMP)
-def test_dishes__patch_updates_timestamps(client, meat_dish, valid_data_to_update_menu):
+def test_dishes__patch_updates_timestamps(
+    client, meat_dish, valid_data_to_update_menu
+):
 
     url = reverse(DETAIL_URL, args=(meat_dish.id,))
-    response = client.patch(url, data=json.dumps(valid_data_to_update_menu),
-                            content_type='application/json')
+    response = client.patch(
+        url,
+        data=json.dumps(valid_data_to_update_menu),
+        content_type='application/json',
+    )
 
     assert Dish.objects.first().modified == TIMESTAMP
     assert response.status_code == status.HTTP_200_OK

@@ -40,6 +40,7 @@ class MenuCardViewSet(viewsets.ModelViewSet):
     @staticmethod
     def _annotate_dishes_num(queryset):
         return queryset.annotate(dishes_num=Count('dishes'))
+
     #
     # def partial_update(self, request, *args, **kwargs):
     #     instance = self.queryset.get(pk=kwargs.get('pk'))

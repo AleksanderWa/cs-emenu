@@ -144,11 +144,45 @@ def test_menus__annotate_num_dishes(client, vegan_menu):
 
 
 @freezegun.freeze_time(TIMESTAMP)
-def test_menus__patch_updates_timestamps(client, vegan_menu, valid_data_to_update_menu):
+def test_menus__patch_updates_timestamps(
+    client, vegan_menu, valid_data_to_update_menu
+):
 
     url = reverse(DETAIL_URL, args=(vegan_menu.id,))
-    response = client.patch(url, data=json.dumps(valid_data_to_update_menu),
-                            content_type='application/json')
+    response = client.patch(
+        url,
+        data=json.dumps(valid_data_to_update_menu),
+        content_type='application/json',
+    )
 
     assert MenuCard.objects.first().modified == TIMESTAMP
     assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.parametrize(
+    'field, expected_card',
+    [
+        (
+            'created',
+            'Cheese card',
+        ),
+        (
+            'modified',
+            'Vegan card',
+        ),
+    ],
+)
+def test_menus__filter_by_field(
+    client,
+    field,
+    expected_card,
+    vegan_menu,
+    vegetarian_menu,
+    meat_menu,
+):
+    url = reverse(LIST_URL)
+    filter_value = MenuCard.objects.filter(name=expected_card).values_list(
+        field, flat=True
+    )[0]
+    response = client.get(url, {field: filter_value})
+    assert response.data[0].get('name') == expected_card
