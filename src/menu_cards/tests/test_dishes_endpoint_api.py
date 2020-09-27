@@ -1,7 +1,10 @@
+import freezegun
 import pytest
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.utils import json
+
 from menu_cards.models import Dish, FOOD_TYPE_CHOICES
 from model_bakery import baker
 from menu_cards.tests.conftest import (
@@ -10,6 +13,7 @@ from menu_cards.tests.conftest import (
     valid_data_for_dish_creation,
     invalid_data_for_dish_creation,
 )
+from menu_cards.tests.test_menu_endpoint_api import TIMESTAMP
 from seeder.management.commands.seed_db import (
     EXAMPLE_VEGAN_DISHES,
     EXAMPLE_VEGETARIAN_DISHES,
@@ -17,6 +21,8 @@ from seeder.management.commands.seed_db import (
 
 LIST_URL = 'dishes-list'
 DETAIL_URL = 'dishes-detail'
+
+pytestmark = pytest.mark.django_db
 
 
 class DishesEndpointTest(TestCase):
@@ -78,7 +84,6 @@ class DishesEndpointTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     'field, values, ordered, reverse_ordered',
     [
@@ -129,3 +134,14 @@ def test_dishes__are_ordered_by_field(
             for item, expected in zip(response.json(), reverse_ordered)
         ]
     )
+
+
+@freezegun.freeze_time(TIMESTAMP)
+def test_dishes__patch_updates_timestamps(client, meat_dish, valid_data_to_update_menu):
+
+    url = reverse(DETAIL_URL, args=(meat_dish.id,))
+    response = client.patch(url, data=json.dumps(valid_data_to_update_menu),
+                            content_type='application/json')
+
+    assert Dish.objects.first().modified == TIMESTAMP
+    assert response.status_code == status.HTTP_200_OK

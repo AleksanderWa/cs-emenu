@@ -1,5 +1,6 @@
 from django.db.models import Count
 from rest_framework import viewsets, permissions
+from rest_framework.response import Response
 
 from menu_cards.models import Dish, MenuCard
 from menu_cards.serializer import DishSerializer, MenuCardSerializer
@@ -39,3 +40,11 @@ class MenuCardViewSet(viewsets.ModelViewSet):
     @staticmethod
     def _annotate_dishes_num(queryset):
         return queryset.annotate(dishes_num=Count('dishes'))
+    #
+    # def partial_update(self, request, *args, **kwargs):
+    #     instance = self.queryset.get(pk=kwargs.get('pk'))
+    #     serializer = self.serializer_class(instance, data=request.data, partial=True)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     print(f"PARTIAL UPDATE!")
+    #     return Response(serializer.data)

@@ -1,8 +1,10 @@
 import json
 
+import freezegun as freezegun
 import pytest
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from menu_cards.models import Dish, MenuCard, FOOD_TYPE_CHOICES
 from model_bakery import baker
@@ -19,6 +21,9 @@ from seeder.management.commands.seed_db import (
 
 LIST_URL = 'menus-list'
 DETAIL_URL = 'menus-detail'
+
+pytestmark = pytest.mark.django_db
+TIMESTAMP = timezone.datetime(2020, 1, 1, 17, 20, 59, tzinfo=timezone.utc)
 
 
 class MenuEndpointTest(TestCase):
@@ -68,7 +73,7 @@ class MenuEndpointTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_menus__single_menu_creation(self):
-        url = reverse('menus-list')
+        url = reverse(LIST_URL)
         menu = valid_data_for_menu_creation()
 
         response = client().post(
@@ -90,7 +95,6 @@ class MenuEndpointTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     'field, ordered, reverse_ordered',
     [
@@ -133,8 +137,18 @@ def test_menus__order_by_field(
     )
 
 
-@pytest.mark.django_db
 def test_menus__annotate_num_dishes(client, vegan_menu):
     url = reverse(LIST_URL)
     response = client.get(url)
     assert response.data[0].get('dishes_num') == vegan_menu.dishes.count()
+
+
+@freezegun.freeze_time(TIMESTAMP)
+def test_menus__patch_updates_timestamps(client, vegan_menu, valid_data_to_update_menu):
+
+    url = reverse(DETAIL_URL, args=(vegan_menu.id,))
+    response = client.patch(url, data=json.dumps(valid_data_to_update_menu),
+                            content_type='application/json')
+
+    assert MenuCard.objects.first().modified == TIMESTAMP
+    assert response.status_code == status.HTTP_200_OK

@@ -15,6 +15,11 @@ def client():
 
 
 @pytest.fixture
+def meat_dish():
+    return baker.make(Dish, food_type=FOOD_TYPE_CHOICES.meat)
+
+
+@pytest.fixture
 def meat_menu():
     return create_menu_card(
         dict(name='Protein', description='meat and more meat'),
@@ -90,4 +95,20 @@ def invalid_data_for_menu_creation():
     return {
         "bad_field": "sad menu",
         "description": "It ain't gonna work",
+    }
+
+
+@pytest.fixture
+def valid_data_to_update_menu():
+    return {
+        "name": "New name!",
+        "description": "new description",
+    }
+
+
+@pytest.fixture
+def valid_data_to_update_dish():
+    return {
+        "name": "New name!",
+        "price": 20.12,
     }
