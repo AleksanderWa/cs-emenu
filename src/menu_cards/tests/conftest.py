@@ -12,9 +12,6 @@ from seeder.management.commands.seed_db import (
     EXAMPLE_MEAT_DISHES,
 )
 
-def client():
-    return Client()
-
 
 @pytest.fixture
 def meat_dish():
@@ -121,6 +118,10 @@ def valid_data_to_update_dish():
     }
 
 
+def client():
+    return Client()
+
+
 @pytest.fixture
 def create_user(db, django_user_model, test_password):
     def make_user(**kwargs):
@@ -128,12 +129,13 @@ def create_user(db, django_user_model, test_password):
         if 'username' not in kwargs:
             kwargs['username'] = str(uuid.uuid4())
         return django_user_model.objects.create_user(**kwargs)
+
     return make_user
 
 
 @pytest.fixture
 def make_superuser(db, django_user_model, test_password):
-    user_kwargs = dict(password= test_password, username=str(uuid.uuid4()))
+    user_kwargs = dict(password=test_password, username=str(uuid.uuid4()))
     return django_user_model.objects.create_superuser(**user_kwargs)
 
 
@@ -158,6 +160,7 @@ def get_superadmin_token(db, make_superuser):
 @pytest.fixture
 def api_client():
     from rest_framework.test import APIClient
+
     return APIClient()
 
 

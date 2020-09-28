@@ -31,7 +31,7 @@ class MenuCardViewSet(viewsets.ModelViewSet):
     queryset = MenuCard.objects.all().prefetch_related('dishes')
     serializer_class = MenuCardSerializer
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     filterset_fields = ['id', 'name', 'created', 'modified']
     ordering_fields = ['id', 'name', 'dishes_num']
