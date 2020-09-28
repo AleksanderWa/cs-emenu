@@ -1,6 +1,9 @@
+import uuid
+
 import pytest
 from django.test import Client
 from model_bakery import baker
+from rest_framework.authtoken.models import Token
 
 from menu_cards.models import Dish, MenuCard, FOOD_TYPE_CHOICES
 from seeder.management.commands.seed_db import (
@@ -8,7 +11,6 @@ from seeder.management.commands.seed_db import (
     EXAMPLE_VEGETARIAN_DISHES,
     EXAMPLE_MEAT_DISHES,
 )
-
 
 def client():
     return Client()
@@ -117,3 +119,57 @@ def valid_data_to_update_dish():
         "name": "New name!",
         "price": 20.12,
     }
+
+
+@pytest.fixture
+def create_user(db, django_user_model, test_password):
+    def make_user(**kwargs):
+        kwargs['password'] = test_password
+        if 'username' not in kwargs:
+            kwargs['username'] = str(uuid.uuid4())
+        return django_user_model.objects.create_user(**kwargs)
+    return make_user
+
+
+@pytest.fixture
+def make_superuser(db, django_user_model, test_password):
+    user_kwargs = dict(password= test_password, username=str(uuid.uuid4()))
+    return django_user_model.objects.create_superuser(**user_kwargs)
+
+
+@pytest.fixture
+def test_password():
+    return 'strong_password'
+
+
+@pytest.fixture
+def get_token(db, create_user):
+    user = create_user()
+    token, _ = Token.objects.get_or_create(user=user)
+    return token
+
+
+@pytest.fixture
+def get_superadmin_token(db, make_superuser):
+    token, _ = Token.objects.get_or_create(user=make_superuser)
+    return token
+
+
+@pytest.fixture
+def api_client():
+    from rest_framework.test import APIClient
+    return APIClient()
+
+
+@pytest.fixture
+def token_client(api_client, get_token):
+    token = get_token
+    api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    return api_client
+
+
+@pytest.fixture
+def superadmin_client(api_client, get_superadmin_token):
+    token = get_superadmin_token
+    api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    return api_client

@@ -1,6 +1,10 @@
 import model_utils
+from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
+from rest_framework.authtoken.models import Token
 
 FOOD_TYPE_CHOICES = model_utils.Choices(
     (10, 'meat', 'Meat'),
@@ -46,3 +50,9 @@ class Dish(TimeStampedModel):
             self.food_type == FOOD_TYPE_CHOICES.vegetarian
             or self.food_type == FOOD_TYPE_CHOICES.vegan
         )
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)

@@ -1,6 +1,10 @@
 from django.db.models import Count
-from rest_framework import viewsets, permissions
-from rest_framework.response import Response
+from rest_framework import viewsets
+from rest_framework.authentication import (
+    SessionAuthentication,
+    BasicAuthentication,
+)
+from rest_framework.permissions import IsAuthenticated
 
 from menu_cards.models import Dish, MenuCard
 from menu_cards.serializer import DishSerializer, MenuCardSerializer
@@ -9,7 +13,8 @@ from menu_cards.serializer import DishSerializer, MenuCardSerializer
 class DishViewSet(viewsets.ModelViewSet):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
-    permissions_classes = [permissions.AllowAny]
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
 
     filterset_fields = ['id', 'name']
     ordering_fields = ('id', 'price', 'food_type')
@@ -25,7 +30,8 @@ class DishViewSet(viewsets.ModelViewSet):
 class MenuCardViewSet(viewsets.ModelViewSet):
     queryset = MenuCard.objects.all().prefetch_related('dishes')
     serializer_class = MenuCardSerializer
-    permissions_classes = [permissions.AllowAny]
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     filterset_fields = ['id', 'name', 'created', 'modified']
     ordering_fields = ['id', 'name', 'dishes_num']
