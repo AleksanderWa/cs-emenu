@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 NUMBER_OF_TEST_DISHES = 15
 NUMBER_OF_TEST_MENU_CARDS = 5
 EXAMPLE_MEAT_DISHES = [
-    'Roasted Cactus',
+    'Roasted Chichek Wings',
     'Spicy Herbed Chicken',
     'Sugar Rib Roast',
     'Sweet Curried Mussels',
@@ -45,9 +45,13 @@ class Command(
 
 
 def create_dishes():
-    meat = DishFactory.create_batch(len(EXAMPLE_MEAT_DISHES))
-    vegetarian = DishFactory.create_batch(len(EXAMPLE_VEGETARIAN_DISHES))
-    vegan = DishFactory.create_batch(len(EXAMPLE_VEGAN_DISHES))
+    meat = [DishFactory.create(name=meat_dish) for meat_dish in EXAMPLE_MEAT_DISHES]
+    vegetarian = [DishFactory.create(name=vegetarian_dish) for vegetarian_dish in EXAMPLE_VEGETARIAN_DISHES]
+    vegan = [DishFactory.create(name=vegan_dish) for vegan_dish in EXAMPLE_VEGAN_DISHES]
+
+    # meat = DishFactory.create_batch(len(EXAMPLE_MEAT_DISHES))
+    # vegetarian = DishFactory.create_batch(len(EXAMPLE_VEGETARIAN_DISHES))
+    # vegan = DishFactory.create_batch(len(EXAMPLE_VEGAN_DISHES))
 
     logger.info('Created dishes:')
     assign_dish_fields(meat, EXAMPLE_MEAT_DISHES, FOOD_TYPE_CHOICES.meat)
@@ -89,6 +93,6 @@ def assign_dishes_to_cards(dishes, card):
 def assign_dish_fields(dishes, food_names, food_type):
     assert len(dishes) == len(food_names)
     for dish, name in zip(dishes, food_names):
-        dish.name = name
+        # dish.name = name
         dish.food_type = food_type
         dish.save()

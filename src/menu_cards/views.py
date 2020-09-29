@@ -1,10 +1,12 @@
+from django.db import IntegrityError
 from django.db.models import Count
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.authentication import (
     SessionAuthentication,
     BasicAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from menu_cards.models import Dish, MenuCard
 from menu_cards.serializer import DishSerializer, MenuCardSerializer
@@ -46,6 +48,13 @@ class MenuCardViewSet(viewsets.ModelViewSet):
     @staticmethod
     def _annotate_dishes_num(queryset):
         return queryset.annotate(dishes_num=Count('dishes'))
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data.copy())
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     #
     # def partial_update(self, request, *args, **kwargs):

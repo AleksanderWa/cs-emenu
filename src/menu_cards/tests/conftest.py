@@ -60,6 +60,7 @@ def create_menu_card(menu_attr=None, dish_attrs=None, dishes_names=None):
     return menu_card
 
 
+@pytest.fixture
 def valid_data_for_dish_creation():
     return {
         "name": "Good Food",
@@ -71,6 +72,7 @@ def valid_data_for_dish_creation():
     }
 
 
+@pytest.fixture
 def invalid_data_for_dish_creation():
     return {
         "name": "Good Food",
@@ -78,7 +80,7 @@ def invalid_data_for_dish_creation():
         "food_type": "10",
     }
 
-
+@pytest.fixture
 def valid_data_for_menu_creation():
     return {
         "name": "Best Menu!",
@@ -94,7 +96,7 @@ def valid_data_for_menu_creation():
         ],
     }
 
-
+@pytest.fixture
 def invalid_data_for_menu_creation():
     return {
         "bad_field": "sad menu",

@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.utils import json
 
-from menu_cards.models import Dish, FOOD_TYPE_CHOICES
+from menu_cards.models import Dish, FOOD_TYPE_CHOICES, MenuCard
 from model_bakery import baker
 from menu_cards.tests.conftest import (
     client,
@@ -19,14 +19,57 @@ from seeder.management.commands.seed_db import (
     EXAMPLE_VEGETARIAN_DISHES,
 )
 
-LIST_URL = 'dishes-list'
-DETAIL_URL = 'dishes-detail'
+DISHES_LIST_URL = 'dishes-list'
+DISHES_DETAIL_URL = 'dishes-detail'
 
 pytestmark = pytest.mark.django_db
 
 
+def test_dishes__list_all_dishes(superadmin_client, vegan_menu):
+    url = reverse(DISHES_LIST_URL)
+    response = superadmin_client.get(url)
+    db_names = vegan_menu.dishes.only('name').values_list('name', flat=True)
+    for item in response.data:
+        assert item.get('name') in db_names
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_dishes__get_shows_name_of_menu_card(superadmin_client, vegetarian_menu):
+    url = reverse(DISHES_LIST_URL)
+    response = superadmin_client.get(url)
+
+    assert all([item.get('menu_card') for item in response.data])
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_dishes__retrieve_single_dish(superadmin_client, vegetarian_dish):
+    dish_from_db = Dish.objects.only('id').first()
+    url = reverse(DISHES_DETAIL_URL, args=(dish_from_db.id,))
+    response = superadmin_client.get(url)
+    assert dish_from_db.id == response.data.get('id')
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_dishes__single_dish_creation(superadmin_client, valid_data_for_dish_creation):
+    url = reverse(DISHES_LIST_URL)
+    response = superadmin_client.post(
+        url, data=valid_data_for_dish_creation, format='json'
+    )
+    created_dish = response.data
+    dish_exists = Dish.objects.filter(id=created_dish.get('id')).exists()
+    assert dish_exists
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_dishes__dish_creation_error_on_wrong_data(superadmin_client, invalid_data_for_dish_creation):
+    url = reverse(DISHES_LIST_URL)
+    response = superadmin_client.post(
+        url, data=invalid_data_for_dish_creation, format='json'
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
 class DishesEndpointTest(TestCase):
-    def setUp(self):
+    def setUp(superadmin_client):
         """Setup for tests to seed db with a test data"""
 
         vegan_card = create_menu_card(
@@ -40,48 +83,48 @@ class DishesEndpointTest(TestCase):
             EXAMPLE_VEGETARIAN_DISHES,
         )
 
-    def test_dishes__list_all_dishes(self):
-        url = reverse(LIST_URL)
-        response = client().get(url)
-        for item in response.data:
-            self.assertIn(
-                item.get('name'),
-                EXAMPLE_VEGETARIAN_DISHES + EXAMPLE_VEGAN_DISHES,
-            )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_dishes__get_shows_name_of_menu_card(self):
-        url = reverse(LIST_URL)
-        response = client().get(url)
-
-        assert all([item.get('menu_card') for item in response.data])
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_dishes__retrieve_single_dish(self):
-        dish_from_db = Dish.objects.only('id').first()
-        url = reverse('dishes-detail', args=(dish_from_db.id,))
-        response = client().get(url)
-        self.assertEqual(dish_from_db.id, response.data.get('id'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_dishes__single_dish_creation(self):
-        url = reverse(LIST_URL)
-        response = client().post(
-            url, data=valid_data_for_dish_creation(), format='json'
-        )
-        created_dish = response.data
-        dish_exists = Dish.objects.filter(id=created_dish.get('id')).exists()
-
-        assert dish_exists
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    def test_dishes__dish_creation_error_on_wrong_data(self):
-        url = reverse(LIST_URL)
-        response = client().post(
-            url, data=invalid_data_for_dish_creation(), format='json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    # def test_dishes__list_all_dishes(superadmin_client):
+    #     url = reverse(LIST_URL)
+    #     response = superadmin_client.get(url)
+    #     for item in response.data:
+    #         self.assertIn(
+    #             item.get('name'),
+    #             EXAMPLE_VEGETARIAN_DISHES + EXAMPLE_VEGAN_DISHES,
+    #         )
+    #
+    #     assert response.status_code == status.HTTP_200_OK
+    #
+    # def test_dishes__get_shows_name_of_menu_card(superadmin_client):
+    #     url = reverse(LIST_URL)
+    #     response = superadmin_client.get(url)
+    #
+    #     assert all([item.get('menu_card') for item in response.data])
+    #     assert response.status_code == status.HTTP_200_OK
+    #
+    # def test_dishes__retrieve_single_dish(superadmin_client):
+    #     dish_from_db = Dish.objects.only('id').first()
+    #     url = reverse('dishes-detail', args=(dish_from_db.id,))
+    #     response = superadmin_client.get(url)
+    #     assert dish_from_db.id == response.data.get('id')
+    #     assert response.status_code == status.HTTP_200_OK
+    #
+    # def test_dishes__single_dish_creation(superadmin_client):
+    #     url = reverse(LIST_URL)
+    #     response = superadmin_client.post(
+    #         url, data=valid_data_for_dish_creation(), format='json'
+    #     )
+    #     created_dish = response.data
+    #     dish_exists = Dish.objects.filter(id=created_dish.get('id')).exists()
+    #
+    #     assert dish_exists
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #
+    # def test_dishes__dish_creation_error_on_wrong_data(superadmin_client):
+    #     url = reverse(LIST_URL)
+    #     response = superadmin_client.post(
+    #         url, data=invalid_data_for_dish_creation(), format='json'
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 @pytest.mark.parametrize(
@@ -114,20 +157,20 @@ class DishesEndpointTest(TestCase):
     ],
 )
 def test_dishes__are_ordered_by_field(
-    client, field, values, ordered, reverse_ordered
+    superadmin_client, field, values, ordered, reverse_ordered
 ):
     for value in values:
         baker.make(Dish, **{field: value})
 
-    url = reverse(LIST_URL)
-    response = client.get(url, {'ordering': field})
+    url = reverse(DISHES_LIST_URL)
+    response = superadmin_client.get(url, {'ordering': field})
     assert all(
         [
             str(item[field]) == str(expected)
             for item, expected in zip(response.json(), ordered)
         ]
     )
-    response = client.get(url, {'ordering': f"-{field}"})
+    response = superadmin_client.get(url, {'ordering': f"-{field}"})
     assert all(
         [
             str(item[field]) == str(expected)
@@ -138,11 +181,11 @@ def test_dishes__are_ordered_by_field(
 
 @freezegun.freeze_time(TIMESTAMP)
 def test_dishes__patch_updates_timestamps(
-    client, meat_dish, valid_data_to_update_menu
+    superadmin_client, meat_dish, valid_data_to_update_menu
 ):
 
-    url = reverse(DETAIL_URL, args=(meat_dish.id,))
-    response = client.patch(
+    url = reverse(DISHES_DETAIL_URL, args=(meat_dish.id,))
+    response = superadmin_client.patch(
         url,
         data=json.dumps(valid_data_to_update_menu),
         content_type='application/json',
