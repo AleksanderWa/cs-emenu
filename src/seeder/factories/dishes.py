@@ -1,6 +1,5 @@
 from random import randint
 
-import factory
 from django.utils import timezone
 from factory import django, fuzzy
 

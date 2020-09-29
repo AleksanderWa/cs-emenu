@@ -1,6 +1,7 @@
 import uuid
 
 import pytest
+from django.contrib.auth.models import User
 from django.test import Client
 from model_bakery import baker
 from rest_framework.authtoken.models import Token
@@ -178,3 +179,8 @@ def superadmin_client(api_client, get_superadmin_token):
     token = get_superadmin_token
     api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
     return api_client
+
+
+@pytest.fixture
+def create_test_users():
+    return baker.make(User, is_superuser=False, _quantity=10)
