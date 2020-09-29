@@ -34,7 +34,9 @@ def test_dishes__list_all_dishes(superadmin_client, vegan_menu):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_dishes__get_shows_name_of_menu_card(superadmin_client, vegetarian_menu):
+def test_dishes__get_shows_name_of_menu_card(
+    superadmin_client, vegetarian_menu
+):
     url = reverse(DISHES_LIST_URL)
     response = superadmin_client.get(url)
 
@@ -50,7 +52,9 @@ def test_dishes__retrieve_single_dish(superadmin_client, vegetarian_dish):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_dishes__single_dish_creation(superadmin_client, valid_data_for_dish_creation):
+def test_dishes__single_dish_creation(
+    superadmin_client, valid_data_for_dish_creation
+):
     url = reverse(DISHES_LIST_URL)
     response = superadmin_client.post(
         url, data=valid_data_for_dish_creation, format='json'
@@ -61,12 +65,15 @@ def test_dishes__single_dish_creation(superadmin_client, valid_data_for_dish_cre
     assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_dishes__dish_creation_error_on_wrong_data(superadmin_client, invalid_data_for_dish_creation):
+def test_dishes__dish_creation_error_on_wrong_data(
+    superadmin_client, invalid_data_for_dish_creation
+):
     url = reverse(DISHES_LIST_URL)
     response = superadmin_client.post(
         url, data=invalid_data_for_dish_creation, format='json'
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
 
 class DishesEndpointTest(TestCase):
     def setUp(superadmin_client):

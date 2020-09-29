@@ -58,30 +58,40 @@ def test_menus__retrieve_single_menu(superadmin_client, meat_menu):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_menus__single_menu_creation(superadmin_client, valid_data_for_menu_creation):
+def test_menus__single_menu_creation(
+    superadmin_client, valid_data_for_menu_creation
+):
     url = reverse(MENU_LIST_URL)
     response = superadmin_client.post(
-        url, data=json.dumps(valid_data_for_menu_creation), content_type='application/json'
+        url,
+        data=json.dumps(valid_data_for_menu_creation),
+        content_type='application/json',
     )
     created_menu = response.data
-    menu_exists = MenuCard.objects.filter(
-        id=created_menu.get('id')
-    ).exists()
+    menu_exists = MenuCard.objects.filter(id=created_menu.get('id')).exists()
     assert menu_exists
     assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_dishes__returns_400_when_duplicated_dish_in_card(superadmin_client, valid_data_for_dish_creation, valid_data_for_menu_creation):
+def test_dishes__returns_400_when_duplicated_dish_in_card(
+    superadmin_client,
+    valid_data_for_dish_creation,
+    valid_data_for_menu_creation,
+):
+    error_msg = "List contains duplicated dish names"
     dishes = [valid_data_for_dish_creation for _ in range(3)]
     valid_data_for_menu_creation['dishes'] = dishes
     url = reverse(MENU_LIST_URL)
     response = superadmin_client.post(
         url, data=valid_data_for_menu_creation, format='json'
     )
+    assert error_msg in response.data['dishes'][0]
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-def test_menus__dish_creation_error_on_wrong_data(superadmin_client, invalid_data_for_menu_creation):
+def test_menus__dish_creation_error_on_wrong_data(
+    superadmin_client, invalid_data_for_menu_creation
+):
     url = reverse(MENU_LIST_URL)
     response = superadmin_client.post(
         url, data=invalid_data_for_menu_creation, format='json'

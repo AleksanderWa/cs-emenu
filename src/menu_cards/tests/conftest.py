@@ -80,6 +80,7 @@ def invalid_data_for_dish_creation():
         "food_type": "10",
     }
 
+
 @pytest.fixture
 def valid_data_for_menu_creation():
     return {
@@ -95,6 +96,7 @@ def valid_data_for_menu_creation():
             },
         ],
     }
+
 
 @pytest.fixture
 def invalid_data_for_menu_creation():

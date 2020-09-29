@@ -45,9 +45,17 @@ class Command(
 
 
 def create_dishes():
-    meat = [DishFactory.create(name=meat_dish) for meat_dish in EXAMPLE_MEAT_DISHES]
-    vegetarian = [DishFactory.create(name=vegetarian_dish) for vegetarian_dish in EXAMPLE_VEGETARIAN_DISHES]
-    vegan = [DishFactory.create(name=vegan_dish) for vegan_dish in EXAMPLE_VEGAN_DISHES]
+    meat = [
+        DishFactory.create(name=meat_dish) for meat_dish in EXAMPLE_MEAT_DISHES
+    ]
+    vegetarian = [
+        DishFactory.create(name=vegetarian_dish)
+        for vegetarian_dish in EXAMPLE_VEGETARIAN_DISHES
+    ]
+    vegan = [
+        DishFactory.create(name=vegan_dish)
+        for vegan_dish in EXAMPLE_VEGAN_DISHES
+    ]
 
     # meat = DishFactory.create_batch(len(EXAMPLE_MEAT_DISHES))
     # vegetarian = DishFactory.create_batch(len(EXAMPLE_VEGETARIAN_DISHES))
