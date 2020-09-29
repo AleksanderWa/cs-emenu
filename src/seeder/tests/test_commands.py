@@ -4,7 +4,9 @@ from django.db import connection, reset_queries
 from django.test import TestCase
 
 from menu_cards.models import Dish, MenuCard
-from seeder.management.commands.create_users import USERS_NUM
+from seeder.management.commands.create_users import (EXAMPLE_SUPER_USER,
+                                                     SUPER_USERS_NUM,
+                                                     USERS_NUM)
 from seeder.management.commands.seed_db import EXAMPLE_DISHES
 
 
@@ -43,5 +45,8 @@ class CreateUsersCommandTest(TestCase):
     def test_seed_db_command_successful_run(self):
         with self.assertLogs(self.logger, level="INFO") as caplog:
             call_command("create_users")
-            assert User.objects.all().count() == USERS_NUM
+            assert User.objects.all().count() == USERS_NUM + SUPER_USERS_NUM
+            assert User.objects.filter(
+                email=EXAMPLE_SUPER_USER["email"], is_superuser=True
+            ).exists()
             self.assertIn("Users successfully created!", caplog.output[-1])
