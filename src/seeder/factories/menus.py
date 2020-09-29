@@ -1,9 +1,6 @@
+from factory import Sequence, django, fuzzy
+
 from menu_cards.models import MenuCard
-from factory import (
-    django,
-    fuzzy,
-    Sequence,
-)
 
 
 class MenuCardsFactory(django.DjangoModelFactory):

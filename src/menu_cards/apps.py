@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class MenuCardsConfig(AppConfig):
-    name = 'menu_cards'
+    name = "menu_cards"

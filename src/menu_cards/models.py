@@ -1,12 +1,16 @@
 import model_utils
+from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
+from rest_framework.authtoken.models import Token
 
 FOOD_TYPE_CHOICES = model_utils.Choices(
-    (10, 'meat', 'Meat'),
-    (11, 'vegetarian', 'Vegetarian'),
-    (12, 'vegan', 'Vegan'),
-    (100, 'unknown', 'Unknown'),
+    (10, "meat", "Meat"),
+    (11, "vegetarian", "Vegetarian"),
+    (12, "vegan", "Vegan"),
+    (100, "unknown", "Unknown"),
 )
 
 
@@ -20,7 +24,7 @@ class Dish(TimeStampedModel):
     description = models.CharField(default="", max_length=250)
     price = models.DecimalField(max_digits=5, decimal_places=2)
     menu_card = models.ForeignKey(
-        MenuCard, on_delete=models.SET_NULL, null=True, related_name='dishes'
+        MenuCard, on_delete=models.SET_NULL, null=True, related_name="dishes"
     )
     prep_time = models.DurationField()
     food_type = models.SmallIntegerField(
@@ -33,7 +37,7 @@ class Dish(TimeStampedModel):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'menu_card'], name='unique_dish_name'
+                fields=["name", "menu_card"], name="unique_dish_name"
             )
         ]
 
@@ -46,3 +50,9 @@ class Dish(TimeStampedModel):
             self.food_type == FOOD_TYPE_CHOICES.vegetarian
             or self.food_type == FOOD_TYPE_CHOICES.vegan
         )
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)

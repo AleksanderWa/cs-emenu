@@ -1,13 +1,10 @@
-import factory
 from random import randint
 
+import factory
 from django.utils import timezone
+from factory import django, fuzzy
 
-from menu_cards.models import Dish, FOOD_TYPE_CHOICES
-from factory import (
-    django,
-    fuzzy,
-)
+from menu_cards.models import FOOD_TYPE_CHOICES, Dish
 
 
 class DishFactory(django.DjangoModelFactory):
