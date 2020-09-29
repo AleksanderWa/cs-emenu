@@ -2,12 +2,12 @@ import pytest
 from django.core import mail
 from django.core.management import call_command
 from django.test import TestCase
-
+from menu_cards.tests.conftest import test_users
 pytestmark = pytest.mark.django_db
 
 
 class SendEmailCommandTest(TestCase):
-    logger = "menu_cards.management.commands.send_email"
+    logger = "mail.management.commands.send_email"
 
     def test_send_email_command_successful_run(self):
         with self.assertLogs(self.logger, level="INFO") as caplog:

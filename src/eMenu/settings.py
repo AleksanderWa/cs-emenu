@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "menu_cards",
     "seeder",
+    "mail",
     "rest_framework",
     "django_filters",
     "rest_framework.authtoken",
