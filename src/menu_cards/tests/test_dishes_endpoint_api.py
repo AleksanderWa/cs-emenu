@@ -5,14 +5,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.utils import json
 
-from menu_cards.models import Dish, FOOD_TYPE_CHOICES, MenuCard
+from menu_cards.models import Dish, FOOD_TYPE_CHOICES
 from model_bakery import baker
-from menu_cards.tests.conftest import (
-    client,
-    create_menu_card,
-    valid_data_for_dish_creation,
-    invalid_data_for_dish_creation,
-)
 from menu_cards.tests.test_menu_endpoint_api import TIMESTAMP
 from seeder.management.commands.seed_db import (
     EXAMPLE_VEGAN_DISHES,

@@ -2,18 +2,10 @@ import json
 
 import freezegun as freezegun
 import pytest
-from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
-from menu_cards.models import Dish, MenuCard, FOOD_TYPE_CHOICES
-from model_bakery import baker
-from menu_cards.tests.conftest import (
-    create_menu_card,
-    valid_data_for_menu_creation,
-    invalid_data_for_menu_creation,
-    superadmin_client,
-)
+from menu_cards.models import MenuCard
 from seeder.management.commands.seed_db import (
     EXAMPLE_VEGAN_DISHES,
     EXAMPLE_VEGETARIAN_DISHES,

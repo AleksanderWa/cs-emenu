@@ -1,10 +1,5 @@
-from django.db import IntegrityError
 from django.db.models import Count
 from rest_framework import viewsets, status
-from rest_framework.authentication import (
-    SessionAuthentication,
-    BasicAuthentication,
-)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -15,7 +10,6 @@ from menu_cards.serializer import DishSerializer, MenuCardSerializer
 class DishViewSet(viewsets.ModelViewSet):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
     filterset_fields = ['id', 'name']
@@ -32,7 +26,6 @@ class DishViewSet(viewsets.ModelViewSet):
 class MenuCardViewSet(viewsets.ModelViewSet):
     queryset = MenuCard.objects.all().prefetch_related('dishes')
     serializer_class = MenuCardSerializer
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
     filterset_fields = ['id', 'name', 'created', 'modified']
@@ -57,12 +50,3 @@ class MenuCardViewSet(viewsets.ModelViewSet):
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
-
-    #
-    # def partial_update(self, request, *args, **kwargs):
-    #     instance = self.queryset.get(pk=kwargs.get('pk'))
-    #     serializer = self.serializer_class(instance, data=request.data, partial=True)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #     print(f"PARTIAL UPDATE!")
-    #     return Response(serializer.data)
