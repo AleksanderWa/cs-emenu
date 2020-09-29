@@ -1,16 +1,16 @@
 import json
 
 import pytest
-from django.urls import reverse
 from django.contrib.auth.models import User
+from django.urls import reverse
 from rest_framework import status
 
-DISHES_LIST = 'dishes-list'
+DISHES_LIST = "dishes-list"
 pytestmark = pytest.mark.django_db
 
 
 def test_user_creation():
-    User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+    User.objects.create_user("john", "lennon@thebeatles.com", "johnpassword")
     assert User.objects.count() == 1
 
 

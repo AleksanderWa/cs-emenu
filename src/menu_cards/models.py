@@ -7,10 +7,10 @@ from model_utils.models import TimeStampedModel
 from rest_framework.authtoken.models import Token
 
 FOOD_TYPE_CHOICES = model_utils.Choices(
-    (10, 'meat', 'Meat'),
-    (11, 'vegetarian', 'Vegetarian'),
-    (12, 'vegan', 'Vegan'),
-    (100, 'unknown', 'Unknown'),
+    (10, "meat", "Meat"),
+    (11, "vegetarian", "Vegetarian"),
+    (12, "vegan", "Vegan"),
+    (100, "unknown", "Unknown"),
 )
 
 
@@ -24,7 +24,7 @@ class Dish(TimeStampedModel):
     description = models.CharField(default="", max_length=250)
     price = models.DecimalField(max_digits=5, decimal_places=2)
     menu_card = models.ForeignKey(
-        MenuCard, on_delete=models.SET_NULL, null=True, related_name='dishes'
+        MenuCard, on_delete=models.SET_NULL, null=True, related_name="dishes"
     )
     prep_time = models.DurationField()
     food_type = models.SmallIntegerField(
@@ -37,7 +37,7 @@ class Dish(TimeStampedModel):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'menu_card'], name='unique_dish_name'
+                fields=["name", "menu_card"], name="unique_dish_name"
             )
         ]
 

@@ -3,4 +3,4 @@
 set -e
 
 black .
-#isort -rc .
+isort -rc .

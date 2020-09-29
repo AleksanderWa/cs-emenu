@@ -1,9 +1,6 @@
 from rest_framework.fields import ReadOnlyField
-from rest_framework.serializers import (
-    PrimaryKeyRelatedField,
-    SerializerMethodField,
-    ValidationError,
-)
+from rest_framework.serializers import (PrimaryKeyRelatedField,
+                                        SerializerMethodField, ValidationError)
 
 from menu_cards.models import Dish, MenuCard
 from utils import DynamicFieldsModelSerializer
@@ -18,7 +15,7 @@ class DishSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Dish
-        fields = '__all__'
+        fields = "__all__"
 
     @staticmethod
     def get_menu_card(obj):
@@ -33,13 +30,13 @@ class MenuCardSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = MenuCard
         fields = [
-            'id',
-            'name',
-            'description',
-            'dishes',
-            'dishes_num',
-            'created',
-            'modified',
+            "id",
+            "name",
+            "description",
+            "dishes",
+            "dishes_num",
+            "created",
+            "modified",
         ]
 
     def validate_dishes(self, data):
@@ -48,14 +45,12 @@ class MenuCardSerializer(DynamicFieldsModelSerializer):
 
     @staticmethod
     def _validate_dish_names_and_type(data):
-        name_food_dish = [
-            (dish.get('name'), dish.get('food_type')) for dish in data
-        ]
+        name_food_dish = [(dish.get("name"), dish.get("food_type")) for dish in data]
         if len(name_food_dish) != len(set(name_food_dish)):
-            raise ValidationError('List contains duplicated dish names')
+            raise ValidationError("List contains duplicated dish names")
 
     def create(self, validated_data):
-        dishes = validated_data.pop('dishes')
+        dishes = validated_data.pop("dishes")
         menu_card = super().create(validated_data)
         for dish in dishes:
             Dish.objects.create(menu_card=menu_card, **dish)

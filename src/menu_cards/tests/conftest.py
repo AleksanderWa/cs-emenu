@@ -5,12 +5,10 @@ from django.test import Client
 from model_bakery import baker
 from rest_framework.authtoken.models import Token
 
-from menu_cards.models import Dish, MenuCard, FOOD_TYPE_CHOICES
-from seeder.management.commands.seed_db import (
-    EXAMPLE_VEGAN_DISHES,
-    EXAMPLE_VEGETARIAN_DISHES,
-    EXAMPLE_MEAT_DISHES,
-)
+from menu_cards.models import FOOD_TYPE_CHOICES, Dish, MenuCard
+from seeder.management.commands.seed_db import (EXAMPLE_MEAT_DISHES,
+                                                EXAMPLE_VEGAN_DISHES,
+                                                EXAMPLE_VEGETARIAN_DISHES)
 
 
 @pytest.fixture
@@ -26,7 +24,7 @@ def vegetarian_dish():
 @pytest.fixture
 def meat_menu():
     return create_menu_card(
-        dict(name='Protein', description='meat and more meat'),
+        dict(name="Protein", description="meat and more meat"),
         dict(food_type=FOOD_TYPE_CHOICES.meat),
         EXAMPLE_MEAT_DISHES,
     )
@@ -35,7 +33,7 @@ def meat_menu():
 @pytest.fixture
 def vegan_menu():
     return create_menu_card(
-        dict(name='Vegan card', description='for carrots lovers'),
+        dict(name="Vegan card", description="for carrots lovers"),
         dict(food_type=FOOD_TYPE_CHOICES.vegan),
         EXAMPLE_VEGAN_DISHES,
     )
@@ -44,7 +42,7 @@ def vegan_menu():
 @pytest.fixture
 def vegetarian_menu():
     return create_menu_card(
-        dict(name='Cheese card', description='!MEAT'),
+        dict(name="Cheese card", description="!MEAT"),
         dict(food_type=FOOD_TYPE_CHOICES.vegetarian),
         EXAMPLE_VEGETARIAN_DISHES,
     )
@@ -129,9 +127,9 @@ def client():
 @pytest.fixture
 def create_user(db, django_user_model, test_password):
     def make_user(**kwargs):
-        kwargs['password'] = test_password
-        if 'username' not in kwargs:
-            kwargs['username'] = str(uuid.uuid4())
+        kwargs["password"] = test_password
+        if "username" not in kwargs:
+            kwargs["username"] = str(uuid.uuid4())
         return django_user_model.objects.create_user(**kwargs)
 
     return make_user
@@ -145,7 +143,7 @@ def make_superuser(db, django_user_model, test_password):
 
 @pytest.fixture
 def test_password():
-    return 'strong_password'
+    return "strong_password"
 
 
 @pytest.fixture
@@ -171,12 +169,12 @@ def api_client():
 @pytest.fixture
 def token_client(api_client, get_token):
     token = get_token
-    api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
     return api_client
 
 
 @pytest.fixture
 def superadmin_client(api_client, get_superadmin_token):
     token = get_superadmin_token
-    api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
     return api_client
