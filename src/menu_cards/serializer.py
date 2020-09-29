@@ -1,5 +1,9 @@
 from rest_framework.fields import ReadOnlyField
-from rest_framework.serializers import PrimaryKeyRelatedField, SerializerMethodField, ValidationError
+from rest_framework.serializers import (
+    PrimaryKeyRelatedField,
+    SerializerMethodField,
+    ValidationError,
+)
 
 from menu_cards.models import Dish, MenuCard
 from utils import DynamicFieldsModelSerializer
@@ -7,18 +11,14 @@ from utils import DynamicFieldsModelSerializer
 
 class DishSerializer(DynamicFieldsModelSerializer):
 
-    menu_card_id = PrimaryKeyRelatedField(queryset=MenuCard.objects.all(), required=False)
+    menu_card_id = PrimaryKeyRelatedField(
+        queryset=MenuCard.objects.all(), required=False
+    )
     menu_card = SerializerMethodField()
 
     class Meta:
         model = Dish
         fields = '__all__'
-    #
-    # def to_representation(self, instance):
-    #     data = super().to_representation(instance)
-    #     instance['menu_card'] = MenuCard.objects.only('name').
-    #     #card_name =
-    #     pass
 
     @staticmethod
     def get_menu_card(obj):
@@ -46,7 +46,8 @@ class MenuCardSerializer(DynamicFieldsModelSerializer):
         self._validate_dish_names_and_type(data)
         return data
 
-    def _validate_dish_names_and_type(self, data):
+    @staticmethod
+    def _validate_dish_names_and_type(data):
         name_food_dish = [
             (dish.get('name'), dish.get('food_type')) for dish in data
         ]
