@@ -25,7 +25,6 @@ class Command(
     help = "Create test users"
 
     def handle(self, *args, **options):
-        # call_command("createsuperuser", **EXAMPLE_SUPER_USER)
         create_users()
         create_superuser()
         logger.info("Users successfully created!")
