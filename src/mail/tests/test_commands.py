@@ -2,7 +2,9 @@ import pytest
 from django.core import mail
 from django.core.management import call_command
 from django.test import TestCase
+
 from menu_cards.tests.conftest import test_users
+
 pytestmark = pytest.mark.django_db
 
 
