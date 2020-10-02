@@ -176,3 +176,19 @@ def test_menus__filter_by_field(
     )[0]
     response = superadmin_client.get(url, {field: filter_value})
     assert response.data[0].get("name") == expected_card
+
+
+@freezegun.freeze_time(TIMESTAMP)
+def test_menus__patch_updates_timestamps(
+    superadmin_client, vegan_menu, valid_data_to_update_menu
+):
+
+    url = reverse(MENU_DETAIL_URL, args=(vegan_menu.id,))
+    response = superadmin_client.patch(
+        url,
+        data=json.dumps(valid_data_to_update_menu),
+        content_type="application/json",
+    )
+
+    assert MenuCard.objects.first().modified == TIMESTAMP
+    assert response.status_code == status.HTTP_200_OK

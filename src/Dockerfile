@@ -17,10 +17,11 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
+## copy entrypoint.sh
+#COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
+
 # copy project
 COPY . /usr/src/app/
 
-# Copy entrypoint script into the image
-#WORKDIR /usr/src/app
-#COPY ./docker-entrypoint.sh /
-#ENTRYPOINT ["/docker-entrypoint.sh"]
+## run entrypoint.sh
+#ENTRYPOINT ["/usr/src/app/entrypoint.sh"]

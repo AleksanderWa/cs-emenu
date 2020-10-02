@@ -114,13 +114,13 @@ def test_dishes__are_ordered_by_field(
 
 @freezegun.freeze_time(TIMESTAMP)
 def test_dishes__patch_updates_timestamps(
-    superadmin_client, meat_dish, valid_data_to_update_menu
+    superadmin_client, meat_dish, valid_data_to_update_dish
 ):
 
     url = reverse(DISHES_DETAIL_URL, args=(meat_dish.id,))
     response = superadmin_client.patch(
         url,
-        data=json.dumps(valid_data_to_update_menu),
+        data=json.dumps(valid_data_to_update_dish),
         content_type="application/json",
     )
 

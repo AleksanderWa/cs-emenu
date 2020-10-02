@@ -2,7 +2,7 @@ import freezegun as freezegun
 import pytest
 from django.utils import timezone
 
-from mail.management.commands.send_email import (
+from mail.management.commands.send_emails import (
     _get_create_on_date_query, _get_created_dishes, _get_created_menu_cards,
     _get_modified_dishes, _get_modified_menu_cards,
     _get_modified_on_date_query, get_cards_and_dishes_for_yesterday)

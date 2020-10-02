@@ -29,14 +29,15 @@ class Command(
 
     def handle(self, *args, **options):
         recipients = _get_all_users()
-        send_email_to_recipient(recipients)
+        email_content = get_cards_and_dishes_for_yesterday()
+        send_email_to_recipient(recipients, email_content)
         logger.info(f"Emails successfully sent")
 
 
-def send_email_to_recipient(recipients):
+def send_email_to_recipient(recipients, email_content):
     send_mail(
-        "Subject here",
-        "Here is the message.",
+        "Dishes and menu cards added or modified yesterday: ",
+        f"{email_content}",
         "from@example.com",
         recipients,
         fail_silently=False,

@@ -13,6 +13,10 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from celery.schedules import crontab
+
+import mail.tasks
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -153,3 +157,13 @@ LOGGING = {
 
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = "/tmp/app-messages"
+
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+
+CELERY_BEAT_SCHEDULE = {
+    "send_emails_task": {
+        "task": "mail.tasks.send_emails",
+        "schedule": crontab(minute=0, hour="10"),
+    }
+}
