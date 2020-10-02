@@ -1,10 +1,13 @@
 from django.db.models import Count
+from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from menu_cards.models import Dish, MenuCard
-from menu_cards.serializer import DishSerializer, MenuCardSerializer
+from menu_cards.serializer import DishSerializer, MenuCardSerializer, DishPhotoSerializer
 
 
 class DishViewSet(viewsets.ModelViewSet):
@@ -21,6 +24,24 @@ class DishViewSet(viewsets.ModelViewSet):
         if ordering in self.ordering_fields:
             queryset = self.queryset.order_by(ordering)
         return queryset
+
+
+    @action(
+        methods=['post'],
+        detail=True,
+        url_path='photo',
+        url_name='photo',
+        parser_classes=[MultiPartParser],
+        serializer_class=DishPhotoSerializer,
+    )
+    def add_photo(self, request, pk):
+        obj = get_object_or_404(Dish, id=pk)
+        data = request.data
+        data['dish'] = obj.id
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class MenuCardViewSet(viewsets.ModelViewSet):

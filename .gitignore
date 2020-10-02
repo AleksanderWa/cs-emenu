@@ -128,3 +128,6 @@ dmypy.json
 
 # idea
 .idea
+
+#mock data
+src/photo

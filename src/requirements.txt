@@ -27,6 +27,7 @@ more-itertools==8.5.0
 mypy-extensions==0.4.3
 packaging==20.4
 pathspec==0.8.0
+Pillow==7.2.0
 pluggy==0.13.1
 prompt-toolkit==3.0.7
 psycopg2==2.8.6

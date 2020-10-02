@@ -1,13 +1,13 @@
+from django.core.validators import FileExtensionValidator
 from rest_framework.fields import ReadOnlyField
 from rest_framework.serializers import (PrimaryKeyRelatedField,
-                                        SerializerMethodField, ValidationError)
+                                        SerializerMethodField, ValidationError, ImageField)
 
-from menu_cards.models import Dish, MenuCard
+from menu_cards.models import Dish, MenuCard, DishPhoto
 from utils import DynamicFieldsModelSerializer
 
 
 class DishSerializer(DynamicFieldsModelSerializer):
-
     menu_card_id = PrimaryKeyRelatedField(
         queryset=MenuCard.objects.all(), required=False
     )
@@ -55,3 +55,12 @@ class MenuCardSerializer(DynamicFieldsModelSerializer):
         for dish in dishes:
             Dish.objects.create(menu_card=menu_card, **dish)
         return menu_card
+
+
+class DishPhotoSerializer(DynamicFieldsModelSerializer):
+    dish = PrimaryKeyRelatedField(queryset=Dish.objects.all())
+    image = ImageField(validators=[FileExtensionValidator(['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'gif','GIF'])])
+
+    class Meta:
+        model = DishPhoto
+        fields = ['id', 'dish', 'image']
