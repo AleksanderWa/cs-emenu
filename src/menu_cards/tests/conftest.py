@@ -1,15 +1,21 @@
 import uuid
+from PIL import Image
 
 import pytest
 from django.contrib.auth.models import User
 from django.test import Client
+from faker import Faker
 from model_bakery import baker
 from rest_framework.authtoken.models import Token
+from six import BytesIO
 
 from menu_cards.models import FOOD_TYPE_CHOICES, Dish, MenuCard
 from seeder.management.commands.seed_db import (EXAMPLE_MEAT_DISHES,
                                                 EXAMPLE_VEGAN_DISHES,
                                                 EXAMPLE_VEGETARIAN_DISHES)
+
+faker = Faker()
+TEST_USERS_NUM = 5
 
 
 @pytest.fixture
@@ -182,5 +188,25 @@ def superadmin_client(api_client, get_superadmin_token):
 
 
 @pytest.fixture
-def create_test_users():
-    return baker.make(User, is_superuser=False, _quantity=10)
+def test_users():
+    return [
+        baker.make(User, is_superuser=False, **_generate_user_data())
+        for _ in range(TEST_USERS_NUM)
+    ]
+
+
+def _generate_user_data():
+    return {
+        "username": faker.name(),
+        "email": faker.email(),
+        "first_name": faker.first_name(),
+        "last_name": faker.last_name(),
+    }
+
+@pytest.fixture
+def photo():
+    data = BytesIO()
+    Image.new('RGB', (100, 100), (255, 255, 255)).save(data, 'png')
+    data.name = 'test.png'
+    data.seek(0)
+    return data

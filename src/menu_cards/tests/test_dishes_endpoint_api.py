@@ -8,8 +8,9 @@ from rest_framework.utils import json
 from menu_cards.models import FOOD_TYPE_CHOICES, Dish
 from menu_cards.tests.test_menu_endpoint_api import TIMESTAMP
 
-DISHES_LIST_URL = "dishes-list"
-DISHES_DETAIL_URL = "dishes-detail"
+DISHES_URL = "dishes"
+DISHES_LIST_URL = f"{DISHES_URL}-list"
+DISHES_DETAIL_URL = f"{DISHES_URL}-detail"
 
 pytestmark = pytest.mark.django_db
 
@@ -114,15 +115,44 @@ def test_dishes__are_ordered_by_field(
 
 @freezegun.freeze_time(TIMESTAMP)
 def test_dishes__patch_updates_timestamps(
-    superadmin_client, meat_dish, valid_data_to_update_menu
+    superadmin_client, meat_dish, valid_data_to_update_dish
 ):
 
     url = reverse(DISHES_DETAIL_URL, args=(meat_dish.id,))
     response = superadmin_client.patch(
         url,
-        data=json.dumps(valid_data_to_update_menu),
+        data=json.dumps(valid_data_to_update_dish),
         content_type="application/json",
     )
 
     assert Dish.objects.first().modified == TIMESTAMP
     assert response.status_code == status.HTTP_200_OK
+
+
+def test_dishes__added_photo_to_dish(superadmin_client, meat_dish, photo):
+    url = reverse(f"{DISHES_URL}-photo", args=(meat_dish.id,))
+
+    response = superadmin_client.post(
+        url,
+        data={"image": photo},
+    )
+    assert Dish.objects.first().photos
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.parametrize(
+    "method, expected_response",
+    [
+        ('get', status.HTTP_405_METHOD_NOT_ALLOWED),
+        ('post', status.HTTP_201_CREATED),
+        ('patch', status.HTTP_405_METHOD_NOT_ALLOWED),
+        ('delete', status.HTTP_405_METHOD_NOT_ALLOWED),
+])
+def test_dishes__add_photo_returns_400_on_wrong_method(superadmin_client, method, expected_response, meat_dish, photo):
+    url = reverse(f"{DISHES_URL}-photo", args=(meat_dish.id,))
+    http_method = getattr(superadmin_client, method)
+    response = http_method(
+        url,
+        data={"image": photo},
+    )
+    assert response.status_code == expected_response

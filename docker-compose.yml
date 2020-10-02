@@ -17,6 +17,31 @@ services:
       - ./.env.dev
     depends_on:
       - db
+      - redis
 
+  redis:
+    image: redis:alpine
+  celery:
+    build: ./src
+    command: celery -A eMenu worker -l INFO
+    volumes:
+      - ./src/:/usr/src/app/
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=ft!pya#zx+ayyv6(gi0+u82o(9#z41=o^t(gcgtli8=4_#*0$t
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
+  celery-beat:
+    build: ./src
+    command: celery -A eMenu beat -l INFO
+    volumes:
+      - ./src/:/usr/src/app/
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=ft!pya#zx+ayyv6(gi0+u82o(9#z41=o^t(gcgtli8=4_#*0$t
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
 volumes:
   postgres_data:

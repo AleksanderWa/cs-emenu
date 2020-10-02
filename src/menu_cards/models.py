@@ -1,5 +1,6 @@
 import model_utils
 from django.conf import settings
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -56,3 +57,8 @@ class Dish(TimeStampedModel):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+class DishPhoto(TimeStampedModel):
+    dish = models.ForeignKey(Dish, on_delete=models.CASCADE, related_name='photos')
+    image = models.ImageField(upload_to='photo', validators=[FileExtensionValidator(['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'gif','GIF'])])
