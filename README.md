@@ -51,13 +51,13 @@ This can be changed in the settings file:
 
 ## TESTS
 There are bunch of test cases inside this project. They can be found in tests directories in each module
-How to run all tests
+### How to run all tests
 run this script
 ``` ./tests.sh```
 run test in single module:
-docker-compose exec web pytest menu_cards/tests/{module_name}
+* docker-compose exec web pytest menu_cards/tests/{module_name}
 **Example:**
-docker-compose exec web pytest menu_cards/tests/test_menu_endpoint_api.py
+* docker-compose exec web pytest menu_cards/tests/test_menu_endpoint_api.py
 ## If by any means you encounter problem with scripts. Here is the list of commands to run project step by step:
 * Go to cloud-services directory
 * Run following commands to setup everything:
