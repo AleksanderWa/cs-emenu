@@ -50,7 +50,24 @@ This can be changed in the settings file:
 ```
 
 ## TESTS
-There are bunch of test cases inside this project. They can be found in /tests/ directories in each module
-# How to run tests:
-* run this script:
+There are bunch of test cases inside this project. They can be found in tests directories in each module
+How to run all tests
+run this script
 ``` ./tests.sh```
+run test in single module:
+docker-compose exec web pytest menu_cards/tests/{module_name}
+**Example:**
+docker-compose exec web pytest menu_cards/tests/test_menu_endpoint_api.py
+## If by any means you encounter problem with scripts. Here is the list of commands to run project step by step:
+* Go to cloud-services directory
+* Run following commands to setup everything:
+ * docker-compose up --build -d
+ * docker-compose exec web python ./manage.py flush --no-input
+ * docker-compose exec web python ./manage.py migrate
+ * docker-compose exec web python ./manage.py seed_db
+ * docker-compose exec web python ./manage.py create_users
+### Tests:
+If project is not running first run:
+docker-compose up --build -d
+Then:
+docker-compose exec web pytest
