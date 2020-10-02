@@ -143,12 +143,15 @@ def test_dishes__added_photo_to_dish(superadmin_client, meat_dish, photo):
 @pytest.mark.parametrize(
     "method, expected_response",
     [
-        ('get', status.HTTP_405_METHOD_NOT_ALLOWED),
-        ('post', status.HTTP_201_CREATED),
-        ('patch', status.HTTP_405_METHOD_NOT_ALLOWED),
-        ('delete', status.HTTP_405_METHOD_NOT_ALLOWED),
-])
-def test_dishes__add_photo_returns_400_on_wrong_method(superadmin_client, method, expected_response, meat_dish, photo):
+        ("get", status.HTTP_405_METHOD_NOT_ALLOWED),
+        ("post", status.HTTP_201_CREATED),
+        ("patch", status.HTTP_405_METHOD_NOT_ALLOWED),
+        ("delete", status.HTTP_405_METHOD_NOT_ALLOWED),
+    ],
+)
+def test_dishes__add_photo_returns_400_on_wrong_method(
+    superadmin_client, method, expected_response, meat_dish, photo
+):
     url = reverse(f"{DISHES_URL}-photo", args=(meat_dish.id,))
     http_method = getattr(superadmin_client, method)
     response = http_method(

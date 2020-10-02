@@ -60,5 +60,12 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 
 class DishPhoto(TimeStampedModel):
-    dish = models.ForeignKey(Dish, on_delete=models.CASCADE, related_name='photos')
-    image = models.ImageField(upload_to='photo', validators=[FileExtensionValidator(['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'gif','GIF'])])
+    dish = models.ForeignKey(Dish, on_delete=models.CASCADE, related_name="photos")
+    image = models.ImageField(
+        upload_to="photo",
+        validators=[
+            FileExtensionValidator(
+                ["jpg", "JPG", "jpeg", "JPEG", "png", "PNG", "gif", "GIF"]
+            )
+        ],
+    )

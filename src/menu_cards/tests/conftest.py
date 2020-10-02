@@ -1,11 +1,11 @@
 import uuid
-from PIL import Image
 
 import pytest
 from django.contrib.auth.models import User
 from django.test import Client
 from faker import Faker
 from model_bakery import baker
+from PIL import Image
 from rest_framework.authtoken.models import Token
 from six import BytesIO
 
@@ -203,10 +203,11 @@ def _generate_user_data():
         "last_name": faker.last_name(),
     }
 
+
 @pytest.fixture
 def photo():
     data = BytesIO()
-    Image.new('RGB', (100, 100), (255, 255, 255)).save(data, 'png')
-    data.name = 'test.png'
+    Image.new("RGB", (100, 100), (255, 255, 255)).save(data, "png")
+    data.name = "test.png"
     data.seek(0)
     return data
