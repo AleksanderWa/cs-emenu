@@ -7,11 +7,27 @@ from menu_cards.models import Dish, DishPhoto, MenuCard
 from utils import DynamicFieldsModelSerializer
 
 
+class DishPhotoSerializer(DynamicFieldsModelSerializer):
+    dish = PrimaryKeyRelatedField(queryset=Dish.objects.all())
+    image = ImageField(
+        validators=[
+            FileExtensionValidator(
+                ["jpg", "JPG", "jpeg", "JPEG", "png", "PNG", "gif", "GIF"]
+            )
+        ]
+    )
+
+    class Meta:
+        model = DishPhoto
+        fields = ["id", "dish", "image"]
+
+
 class DishSerializer(DynamicFieldsModelSerializer):
     menu_card_id = PrimaryKeyRelatedField(
         queryset=MenuCard.objects.all(), required=False
     )
     menu_card = SerializerMethodField()
+    photos = DishPhotoSerializer(read_only=True, many=True)
 
     class Meta:
         model = Dish
@@ -57,16 +73,4 @@ class MenuCardSerializer(DynamicFieldsModelSerializer):
         return menu_card
 
 
-class DishPhotoSerializer(DynamicFieldsModelSerializer):
-    dish = PrimaryKeyRelatedField(queryset=Dish.objects.all())
-    image = ImageField(
-        validators=[
-            FileExtensionValidator(
-                ["jpg", "JPG", "jpeg", "JPEG", "png", "PNG", "gif", "GIF"]
-            )
-        ]
-    )
 
-    class Meta:
-        model = DishPhoto
-        fields = ["id", "dish", "image"]

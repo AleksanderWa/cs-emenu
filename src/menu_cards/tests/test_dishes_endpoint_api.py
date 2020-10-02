@@ -5,7 +5,7 @@ from model_bakery import baker
 from rest_framework import status
 from rest_framework.utils import json
 
-from menu_cards.models import FOOD_TYPE_CHOICES, Dish
+from menu_cards.models import FOOD_TYPE_CHOICES, Dish, DishPhoto
 from menu_cards.tests.test_menu_endpoint_api import TIMESTAMP
 
 DISHES_URL = "dishes"
@@ -140,6 +140,16 @@ def test_dishes__added_photo_to_dish(superadmin_client, meat_dish, photo):
     assert response.status_code == status.HTTP_201_CREATED
 
 
+def test_dishes__photo_included_in_response(superadmin_client, meat_dish):
+    url = reverse(f"{DISHES_DETAIL_URL}", args=(meat_dish.id,))
+    photo = baker.make(DishPhoto, dish=meat_dish)
+    response = superadmin_client.get(
+        url,
+    )
+    assert response.data['photos'][0]['id'] == photo.id
+    assert response.status_code == status.HTTP_200_OK
+
+
 @pytest.mark.parametrize(
     "method, expected_response",
     [
@@ -149,7 +159,7 @@ def test_dishes__added_photo_to_dish(superadmin_client, meat_dish, photo):
         ("delete", status.HTTP_405_METHOD_NOT_ALLOWED),
     ],
 )
-def test_dishes__add_photo_returns_400_on_wrong_method(
+def test_dishes__add_photo_accepts_only_post_method(
     superadmin_client, method, expected_response, meat_dish, photo
 ):
     url = reverse(f"{DISHES_URL}-photo", args=(meat_dish.id,))
