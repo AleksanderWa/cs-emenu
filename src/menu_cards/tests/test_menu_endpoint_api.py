@@ -48,7 +48,7 @@ def test_menus__retrieve_single_menu(superadmin_client, meat_menu):
 
 def test_menus__single_menu_creation(superadmin_client, valid_data_for_menu_creation):
     url = reverse(MENU_LIST_URL)
-    dishes_num = len(valid_data_for_menu_creation['dishes'])
+    dishes_num = len(valid_data_for_menu_creation["dishes"])
     response = superadmin_client.post(
         url,
         data=json.dumps(valid_data_for_menu_creation),
@@ -57,13 +57,18 @@ def test_menus__single_menu_creation(superadmin_client, valid_data_for_menu_crea
     created_menu = response.data
     menu_exists = MenuCard.objects.filter(id=created_menu.get("id")).exists()
     assert menu_exists
-    assert MenuCard.objects.filter(id=created_menu.get("id")).first().dishes.count() == dishes_num
+    assert (
+        MenuCard.objects.filter(id=created_menu.get("id")).first().dishes.count()
+        == dishes_num
+    )
     assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_menus__cannot_create_empty_menu(superadmin_client, valid_data_for_menu_creation):
+def test_menus__cannot_create_empty_menu(
+    superadmin_client, valid_data_for_menu_creation
+):
     url = reverse(MENU_LIST_URL)
-    del valid_data_for_menu_creation['dishes']
+    del valid_data_for_menu_creation["dishes"]
     response = superadmin_client.post(
         url,
         data=json.dumps(valid_data_for_menu_creation),
@@ -208,4 +213,3 @@ def test_menus__patch_updates_timestamps(
 
     assert MenuCard.objects.first().modified == TIMESTAMP
     assert response.status_code == status.HTTP_200_OK
-

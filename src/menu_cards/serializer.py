@@ -71,6 +71,3 @@ class MenuCardSerializer(DynamicFieldsModelSerializer):
         for dish in dishes:
             Dish.objects.create(menu_card=menu_card, **dish)
         return menu_card
-
-
-

@@ -146,7 +146,7 @@ def test_dishes__photo_included_in_response(superadmin_client, meat_dish):
     response = superadmin_client.get(
         url,
     )
-    assert response.data['photos'][0]['id'] == photo.id
+    assert response.data["photos"][0]["id"] == photo.id
     assert response.status_code == status.HTTP_200_OK
 
 
